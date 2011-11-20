@@ -1,12 +1,20 @@
 {
-    "name": "noban"
+    "author": "Alexis GRIMALDI <alexis.grimaldi@gmail.com>"
+  , "name": "noban"
+  , "description": "A lightweight go server"
   , "version": "0.0.1"
+  , "repository": {
+      "type": "git"
+    , "url": "gitolite@88.191.150.95:noban"
+    }
   , "private": true
   , "dependencies": {
       "express": ">=2.5.0"
-    , "jade": ">= 0.16.4"
+    , "jade": ">=0.16.4"
     , "mongoose": ">=2.3.10"
     , "everyauth": ">=0.2.23"
     , "socket.io": ">=0.8"
+    , "nib": ">=0.3.0"
   }
+  , "devDependencies": {}
 }
