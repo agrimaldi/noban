@@ -1,0 +1,12 @@
+{
+    "name": "noban"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "express": ">=2.5.0"
+    , "jade": ">= 0.16.4"
+    , "mongoose": ">=2.3.10"
+    , "everyauth": ">=0.2.23"
+    , "socket.io": ">=0.8"
+  }
+}
