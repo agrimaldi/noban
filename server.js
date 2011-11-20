@@ -3,13 +3,22 @@
  */
 var util = require('util')
   , express = require('express')
-  , auth = require('everyauth');
+  , auth = require('everyauth')
+  , mongoose = require('mongoose');
 
+
+/**
+ * Initialise mongoose connection and models loading
+ */
+mongoose.connect('mongodb://localhost/noban');
+var Player = mongoose.model('Player');
+ 
 
 /**
  * Authentication
  */
 auth.debug = true;
+
 var addUser = function(credentials) {
   var user;
   user = credentials;
@@ -68,9 +77,7 @@ auth
     })
     .registerUser( function (newUserAttrs) {
       var login = newUserAttrs[this.loginKey()];
-      usersByLogin[login] = addUser(newUserAttrs);
-      console.log(usersByLogin);
-      return
+      return usersByLogin[login] = addUser(newUserAttrs);
     })
 
     .loginSuccessRedirect('/')
