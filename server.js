@@ -1,52 +1,43 @@
-var express = require('express')
-  , everyauth = require('everyauth');
+/**
+ * Required Modules
+ */
+var util = require('util')
+  , express = require('express')
+  , auth = require('everyauth');
 
-everyauth.debug = true;
 
-var usersById = {};
-var nextUserId = 0;
-
-function addUser (source, sourceUser) {
+/**
+ * Authentication
+ */
+auth.debug = true;
+var addUser = function(credentials) {
   var user;
-  if (arguments.length === 1) { // password-based
-    user = sourceUser = source;
-    user.id = ++nextUserId;
-    return usersById[nextUserId] = user;
-  } else { // non-password-based
-    user = usersById[++nextUserId] = {id: nextUserId};
-    user[source] = sourceUser;
-  }
-  return user;
+  user = credentials;
+  user.id = ++nextUserId;
+  return usersById[nextUserId] = user;
 }
 
-var usersByLogin = {
-  'brian@example.com': addUser({ login: 'brian@example.com', password: 'password'})
+var usersById = {}
+  , nextUserId = 0
+  , usersByLogin = {
+  'agrim@noban.com': addUser({
+    login: 'agrim@noban.com',
+    password: 'pass'
+  })
 };
 
-everyauth.everymodule
-  .findUserById( function (id, callback) {
-    callback(null, usersById[id]);
-  });
-
-everyauth
+auth
+  /**
+   * Login
+   */
   .password
     .loginWith('email')
     .getLoginPath('/login')
     .postLoginPath('/login')
     .loginView('login.jade')
-//    .loginLocals({
-//      title: 'Login'
-//    })
-//    .loginLocals(function (req, res) {
-//      return {
-//        title: 'Login'
-//      }
-//    })
     .loginLocals( function (req, res, done) {
       setTimeout( function () {
-        done(null, {
-          title: 'Async login'
-        });
+        done(null, { title: 'Async login' });
       }, 200);
     })
     .authenticate( function (login, password) {
@@ -59,23 +50,15 @@ everyauth
       if (user.password !== password) return ['Login failed'];
       return user;
     })
-
+    /**
+     * Registration
+     */
     .getRegisterPath('/register')
     .postRegisterPath('/register')
     .registerView('register.jade')
-//    .registerLocals({
-//      title: 'Register'
-//    })
-//    .registerLocals(function (req, res) {
-//      return {
-//        title: 'Sync Register'
-//      }
-//    })
     .registerLocals( function (req, res, done) {
       setTimeout( function () {
-        done(null, {
-          title: 'Async Register'
-        });
+        done(null, { title: 'Async Register' });
       }, 200);
     })
     .validateRegistration( function (newUserAttrs, errors) {
@@ -85,32 +68,60 @@ everyauth
     })
     .registerUser( function (newUserAttrs) {
       var login = newUserAttrs[this.loginKey()];
-      return usersByLogin[login] = addUser(newUserAttrs);
+      usersByLogin[login] = addUser(newUserAttrs);
+      console.log(usersByLogin);
+      return
     })
 
     .loginSuccessRedirect('/')
     .registerSuccessRedirect('/');
 
 
-var app = express.createServer(
-    express.bodyParser()
-  , express.static(__dirname + "/public")
-  , express.cookieParser()
-  , express.session({ secret: 'hariom'})
-  , everyauth.middleware()
-);
 
-app.configure( function () {
+/**
+ * Create the main app
+ */
+var app = module.exports = express.createServer();
+
+
+/**
+ * Configuration
+ */
+app.configure(function() {
+  app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(express.cookieParser());
+  app.use(express.session({ secret: 'hariom' }));
+  //app.use(stylus.middleware({
+    //src: __dirname + '/public'
+    //, compile: function(str, path){
+      //return stylus(str)
+      //.set('filename', path)
+      //.set('compress', true)
+      //.use(nib());
+    //}   
+  //}));
+  app.use(app.router);
+  app.use(express.static(__dirname + '/public'));
+  app.use(auth.middleware());
 });
 
-app.get('/', function (req, res) {
-  res.render('home');
-});
 
-everyauth.helpExpress(app);
+/**
+ * Map routes
+ */
+var home = require('./controllers/home');
+home.route(app);
 
-app.listen(3000);
 
-console.log('noban server running at http://localhost:3000');
+/**
+ * Start the server
+ */
 
+if (!module.parent) {
+  auth.helpExpress(app);
+  app.listen(3000);
+  console.log('noban server running on %s:%d', app.address().address, app.address().port);
+}
