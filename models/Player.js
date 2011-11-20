@@ -15,7 +15,7 @@ module.exports = function(app, conf) {
           first: String
         , last: String
       }
-    , nickname: String
+    , login: String
     , email: String
     , lastConnection: Date
     , joined: Date
@@ -38,7 +38,7 @@ module.exports = function(app, conf) {
       }
     }
   , password: {
-      loginWith: 'email'
+      loginWith: 'login'
     , extraParams: {
         name: {
           first: String
