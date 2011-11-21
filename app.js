@@ -10,7 +10,7 @@ app.modules                                       = {};
 var everyauth       = app.modules.everyauth       = require('everyauth')
   , mongoose        = app.modules.mongoose        = require('mongoose')
   , mongooseAuth    = app.modules.mongooseAuth    = require('mongoose-auth')
-  , conf                                          = require('./conf');
+  , settings                                      = require('./settings');
 
 
 /**
@@ -18,8 +18,8 @@ var everyauth       = app.modules.everyauth       = require('everyauth')
  */
 app.db              = mongoose;
 app.models          = {};
-app.models.Game     = require('./models/Game')(app, conf);
-app.models.Player   = require('./models/Player')(app, conf);
+app.models.Game     = require('./models/Game')(app, settings);
+app.models.Player   = require('./models/Player')(app, settings);
  
 
 /**
@@ -51,18 +51,18 @@ app.configure('development', function() {
     dumpExceptions: true
   , showStack: true
   }));                                                                                                                                                                   
-  app.db.connect(conf.mongodb.uri.development);
+  app.db.connect(settings.mongodb.uri.development);
   everyauth.debug = true;
 });
 
 app.configure('test', function() {
   app.use(express.errorHandler());
-  app.db.connect(conf.mongodb.uri.test);
+  app.db.connect(settings.mongodb.uri.test);
 });
 
 app.configure('production', function() {
   app.use(express.errorHandler()); 
-  app.db.connect(conf.mongodb.uri.production);
+  app.db.connect(settings.mongodb.uri.production);
 });
 
 
@@ -76,7 +76,7 @@ mongooseAuth.helpExpress(app);
  * Load Controllers
  */
 app.controllers       = {}
-app.controllers.app   = require('./controllers/AppController')(app, conf);
+app.controllers.app   = require('./controllers/AppController')(app, settings);
 
 
 /**
@@ -91,6 +91,6 @@ app.get('/*', function(req, res, next) {
  * Only listen on $ node app.js
  */
 if (!module.parent) {
-  app.listen(conf.port);
+  app.listen(settings.port);
   console.log("noban server listening on port %d in %s mode", app.address().port, app.settings.env);
 }

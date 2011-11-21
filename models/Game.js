@@ -2,6 +2,7 @@
  * Game model
  */
 module.exports = function(app, conf) {
+
   var Schema        = app.db.Schema
     , ObjectId      = Schema.ObjectId
     , mongooseAuth  = app.modules.mongooseAuth;
@@ -54,4 +55,5 @@ module.exports = function(app, conf) {
    * Return the Player model
    */
   return Game
+
 }
