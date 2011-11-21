@@ -18,6 +18,7 @@ var everyauth       = app.modules.everyauth       = require('everyauth')
  */
 app.db              = mongoose;
 app.models          = {};
+app.models.Game     = require('./models/Game')(app, conf);
 app.models.Player   = require('./models/Player')(app, conf);
  
 
