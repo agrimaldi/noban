@@ -2,10 +2,38 @@
  * Game model
  */
 module.exports = function(app, conf) {
-  var GameSchema        = require('./Schemas').GameSchema
-    , ObjectId      = app.db.SchemaTypes.ObjectId
-    , mongooseAuth  = app.modules.mongooseAuth
-    , Game = null;
+  var Schema        = app.db.Schema
+    , ObjectId      = Schema.ObjectId
+    , mongooseAuth  = app.modules.mongooseAuth;
+
+
+  /**
+   * GameSchema
+   */
+  var GameSchema = new Schema({
+      title: String
+    , date: Date
+    , size: Number
+    , creator: { type: ObjectId, ref: 'PlayerSchema' }
+    , players: {
+        black: { type: ObjectId, ref: 'PlayerSchema' }
+      , white: { type: ObjectId, ref: 'PlayerSchema' }
+      , watchers: [{ type: ObjectId, ref: 'PlayerSchema' }]
+      }
+    , winner: { type: ObjectId, ref: 'PlayerSchema' }
+    , loser: { type: ObjectId, ref: 'PlayerSchema' }
+    , level: {
+        min: {
+          kyu: Number
+        , dan: Number
+        }
+      , max: {
+          kyu: Number
+        , dan: Number
+        }
+      }
+  });
+  var Game = null;
 
 
   /**

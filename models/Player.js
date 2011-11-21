@@ -2,10 +2,35 @@
  * Player model
  */
 module.exports = function(app, conf) {
-  var PlayerSchema  = require('./Schemas').PlayerSchema
-    , ObjectId      = app.db.SchemaTypes.ObjectId
-    , mongooseAuth  = app.modules.mongooseAuth
-    , Player = null;
+  var Schema = app.db.Schema
+    , ObjectId = Schema.ObjectId
+    , mongooseAuth  = app.modules.mongooseAuth;
+
+
+  /**
+   * Player Schema
+   */
+  var PlayerSchema = new Schema({
+      name: {
+        first: String
+      , last: String
+      }
+    , login: String
+    , email: String
+    , lastConnection: Date
+    , joined: Date
+    , level: {
+        kyu: Number
+      , dan: Number
+      }
+    , games: {
+        won: [{ type: ObjectId, ref: 'GameSchema' }]
+      , lost: [{ type: ObjectId, ref: 'GameSchema' }]
+      , tie: [{ type: ObjectId, ref: 'GameSchema' }]
+      , current: [{ type: ObjectId, ref: 'GameSchema' }]
+      }
+  });
+  var Player = null;
 
 
   /**
