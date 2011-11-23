@@ -42,7 +42,6 @@ app.configure(function() {
       //.use(nib());
     //}   
   //}));
-  app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
 
@@ -75,8 +74,9 @@ mongooseAuth.helpExpress(app);
 /**
  * Load Controllers
  */
-app.controllers       = {}
-app.controllers.app   = require('./controllers/AppController')(app, settings);
+app.controllers         = {}
+app.controllers.app     = require('./controllers/AppController')(app, settings);
+app.controllers.error   = require('./controllers/ErrorController')(app, settings);
 
 
 /**
