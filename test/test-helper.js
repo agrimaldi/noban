@@ -1,4 +1,9 @@
-var verbs = {
+var should = require('should');
+
+/**
+ * API requests
+ */
+var api = {
 
   'get': function(browser, url) {
     return function() {
@@ -13,4 +18,17 @@ var verbs = {
   }
 }
 
-exports.verbs = verbs;
+/**
+ * Helper Macros
+ */
+var macros = {
+  
+  'assert_status': function(code) {
+    return function(_, res, $) {
+      res.should.have.status(code);
+    }
+  }
+}
+
+exports.api = api;
+exports.macros = macros;
