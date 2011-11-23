@@ -42,7 +42,7 @@ app.configure(function() {
       //.use(nib());
     //}   
   //}));
-  //app.use(app.router);
+  app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
 
