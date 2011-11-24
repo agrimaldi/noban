@@ -1,16 +1,21 @@
+process.env['NODE_ENV'] = 'test';
+
 var vows = require('vows')
   , tobi = require('tobi')
   , should = require('should')
   , api = require('./test-helper').api
   , macros = require('./test-helper').macros
-  , browser = tobi.createBrowser(3000, '0.0.0.0');
+  , app = require('../app')
+  , browser = tobi.createBrowser(app);
 
 
-vows.describe('Home').addBatch({
+vows
+  .describe('Home')
+  .addBatch({
 
-  'The home page': {
-    topic: api.get(browser, '/'),
+    'The home page': {
+      topic: api.get(browser, '/'),
 
-    'should respond with 200 OK': macros.assert_status(200)
-  }
-}).export(module);
+      'should respond with 200 OK': macros.assert_status(200)
+    }
+  }).export(module);
