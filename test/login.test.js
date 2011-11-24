@@ -11,28 +11,28 @@ var vows = require('vows')
 
 vows
   .describe('Login')
+
   .addBatch({
-
     'The login page': {
-      topic: api.get(browser, '/login'),
+      topic: api.get(browser, '/login')
 
-      'should respond with 200 OK': macros.assert_status(200),
+    , 'should respond with 200 OK': macros.assert_status(200)
 
-      'should have a form': {
-        topic: function(_, $) { return $('form'); },
+    , 'should have a form': {
+        topic: function(_, $) { return $('form'); }
 
-        'that has a valid structure': function(form) {
+      , 'that has a valid structure': function(form) {
           form
             .should.have.action('/login')
             .and.have.id('login_form')
             .and.have.method('post')
             .and.have.many('input');
-        },
-        'that has a login field': function(form) {
+        }
+      , 'that has a login field': function(form) {
           form.find(' > input[name=login]')
             .should.have.attr('type', 'text');
-        },
-        'that has a password field': function(form) {
+        }
+      , 'that has a password field': function(form) {
           form.find(' > input[name=password]')
             .should.have.attr('type', 'password');
         }

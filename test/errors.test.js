@@ -11,11 +11,11 @@ var vows = require('vows')
 
 vows
   .describe('Errors')
+
   .addBatch({
-
     'A page that does not exist': {
-      topic: api.get(browser, '/notfound'),
+      topic: api.get(browser, '/notfound')
 
-      'should respond with 404 NOT FOUND': macros.assert_status(404)
+    , 'should respond with 404 NOT FOUND': macros.assert_status(404)
     }
   }).export(module);
