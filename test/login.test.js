@@ -7,6 +7,7 @@ var vows = require('vows')
   , macros = require('./test-helper').macros
   , app = require('../app')
   , browser = tobi.createBrowser(app);
+  //, browser = tobi.createBrowser(3000, '0.0.0.0');
 
 
 vows
@@ -37,9 +38,27 @@ vows
             .should.have.attr('type', 'password');
         }
       , 'that has a submit button': function(form) {
-          form.find(':submit')
-            .should.have.name('submit-credentials');
+          form.find('> input[name=login-credentials]')
+            .should.have.attr('type', 'submit');
         }
       }
     }
-  }).export(module);
+  })
+  
+  .addBatch({
+    'Authenticating': {
+      topic: api.get(browser, '/login')
+
+    , 'with non existing credential': {
+        topic: macros.fill_submit({ login: 'nonexistant', password: 'random' })
+
+      , 'should respond with 200 OK': macros.assert_status(200)
+
+      , 'should display "User does not exist"': function(_, res, $) {
+          console.log('test');
+        }
+      }
+    }
+  })
+  
+  .export(module);

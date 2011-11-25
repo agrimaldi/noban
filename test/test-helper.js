@@ -11,9 +11,10 @@ var api = {
     }
   },
 
-  'post': function(browser, url) {
+  'post': function(browser, url, data) {
     return function() {
-      browser.post(url, this.callback.bind(this, null));
+      data = JSON.stringify(data);
+      browser.post(url, d, this.callback.bind(this, null));
     }
   }
 }
@@ -26,6 +27,14 @@ var macros = {
   'assert_status': function(code) {
     return function(_, res, $) {
       res.should.have.status(code);
+    }
+  }
+
+, 'fill_submit': function(credentials) {
+    return function(res, $) {
+      $('form')
+        .fill({ login: 'shaddy', password: 'random' })
+        .submit(this.callback.bind(this, null));
     }
   }
 }

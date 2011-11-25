@@ -29,24 +29,28 @@ vows
             .and.have.many('input');
         }
       , 'that has a login field': function(form) {
-          form.find(' > input[name=login]')
+          form.find('> input[name=login]')
             .should.have.attr('type', 'text');
         }
       , 'that has a password field': function(form) {
-          form.find(' > input[name=password]')
+          form.find('> input[name=password]')
             .should.have.attr('type', 'password');
         }
       , 'that has a first-name field': function(form) {
-          form.find(' > input[name="name.first"]')
+          form.find('> input[name="name.first"]')
             .should.have.attr('type', 'text');
         }
       , 'that has a last-name field': function(form) {
-          form.find(' > input[name="name.last"]')
+          form.find('> input[name="name.last"]')
             .should.have.attr('type', 'text');
         }
       , 'that has an email field': function(form) {
-          form.find(' > input[name=email]')
+          form.find('> input[name=email]')
             .should.have.attr('type', 'email');
+        }
+      , 'that has a submit button': function(form) {
+          form.find('> input[name=register-credentials]')
+            .should.have.attr('type', 'submit');
         }
       }
     }
