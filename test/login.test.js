@@ -7,11 +7,31 @@ var vows = require('vows')
   , macros = require('./test-helper').macros
   , app = require('../app')
   , browser = tobi.createBrowser(app);
-  //, browser = tobi.createBrowser(3000, '0.0.0.0');
 
 
 vows
   .describe('Login')
+
+  .addBatch({
+    'Creating test user': {
+      topic: function() {
+        var player = new app.models.Player({
+          name: {
+            first: 'exis'
+          , last: 'tant'
+          }
+        , login: 'existant'
+        , email: 'existant@somewhere.com'
+        });
+        player.password = 'password';
+        player.save(this.callback);
+      }
+
+    , 'should provide a test user to the database': function(player) {
+        player.should.have.property('login', 'existant');
+      }
+    }
+  })
 
   .addBatch({
     'The login page': {
@@ -49,7 +69,7 @@ vows
     'Authenticating': {
       topic: api.get(browser, '/login')
 
-    , 'with non existing credential': {
+    , 'with non existing login': {
         topic: macros.fill_submit({ login: 'nonexistant', password: 'random' })
 
       , 'should respond with 200 OK': macros.assert_status(200)
@@ -59,6 +79,28 @@ vows
             , li = 'User with login ' + login + ' does not exist';
           $('ul#errors').should.have.one('li', li);
         }
+      }
+    , 'with a wrong password': {
+        topic: macros.fill_submit({ login: 'existant', password: 'wrongpassword' })
+
+      , 'should respond with 200 OK': macros.assert_status(200)
+
+      , 'should display "Failed Login"': function(_, res, $) {
+          $('ul#errors').should.have.one('li', 'Failed login.');
+        }
+      }
+    }
+  })
+
+  .addBatch({
+    'Deleting the test user': {
+      topic: function() {
+        var Player = app.models.Player;
+        Player.findOne({ login: 'existant' }, this.callback);
+      }
+
+    , 'should properly delete the test user': function(player) {
+        player.remove();
       }
     }
   })

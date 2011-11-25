@@ -33,7 +33,7 @@ var macros = {
 , 'fill_submit': function(credentials) {
     return function(res, $) {
       $('form')
-        .fill({ login: 'shaddy', password: 'random' })
+        .fill(credentials)
         .submit(this.callback.bind(this, null));
     }
   }
