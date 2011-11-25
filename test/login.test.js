@@ -55,7 +55,9 @@ vows
       , 'should respond with 200 OK': macros.assert_status(200)
 
       , 'should display "User does not exist"': function(_, res, $) {
-          console.log('test');
+          var login = $('form > input=[name=login]').attr('value')
+            , li = 'User with login ' + login + ' does not exist';
+          $('ul#errors').should.have.one('li', li);
         }
       }
     }
