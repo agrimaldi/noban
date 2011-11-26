@@ -100,10 +100,16 @@ vows
       , 'should redirect to /': function(_, res, $) {
         }
       , 'should inform the user he is logged in': function(_, res, $) {
-          browser.text('h2').should.equal('Authenticated');
+          $('ul#auth_msgs')
+            .should.have.one('li.auth_msg', 'Authenticated');
         }
       , 'should provide a way to log out': function(_, res, $) {
-          $('a').should.have.attr('href', '/logout');
+          $('#auth_actions')
+            .should.have.one('#logout');
+          $('#logout')
+            .should.have.one('a');
+          $('#logout > a')
+            .should.have.attr('href', '/logout');
         }
       , 'and then logging out': {
           topic: api.get(browser, '/logout')
@@ -111,7 +117,8 @@ vows
         , 'should respond with 200 OK': macros.assert_status(200)
 
         , 'should warn the user he is no longer authenticated': function(_, res, $) {
-            browser.text('h2').should.equal('Not Authenticated');
+            $('ul#auth_msgs')
+              .should.have.one('li.auth_msg', 'Not Authenticated');
           }
         }
       }
@@ -119,22 +126,22 @@ vows
   })
 
   .addBatch({
-    'Deleting the test user': {
+    'Finding the test user': {
       topic: function() {
         var Player = app.models.Player;
         Player.findOne({ login: 'existant' }, this.callback);
       }
 
-    , 'should properly delete the test user': function(player) {
+    , 'and deleting it': function(player) {
         player.remove(this.callback);
       }
-    , 'and trying to find it again in the database': {
+    , 'after it has been deleted': {
         topic: function() {
           var Player = app.models.Player;
           Player.findOne({ login: 'existant' }, this.callback);
         }
 
-      , 'should result in no results': function(player) {
+      , 'should yield in no results': function(player) {
           should.not.exist(player);
         }
       }

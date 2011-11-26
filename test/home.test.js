@@ -22,12 +22,24 @@ vows
         topic: function(_, $) { return $; }
 
       , 'should provide a way to login': function($) {
-          $('#password-login').should.have.one('a');
-          should.equal($('#password-login > a').attr('href'), '/login');
+          $('#auth_actions')
+            .should.have.one('#password-login');
+          $('#password-login')
+            .should.have.one('a');
+          $('#password-login > a')
+            .should.have.attr('href', '/login');
         }
       , 'should provide a way to register': function($) {
-          $('#register').should.have.one('a');
-          should.equal($('#register > a').attr('href'), '/register');
+          $('#auth_actions')
+            .should.have.one('#register');
+          $('#register')
+            .should.have.one('a');
+          $('#register > a')
+            .should.have.attr('href', '/register');
+        }
+      , 'should not provide a way to logout': function($) {
+          $('#auth_actions')
+            .should.not.have.one('#logout');
         }
       }
     }

@@ -1,10 +1,14 @@
 - if (!everyauth.loggedIn)
-  h2 Not Authenticated
-  #register
-    a(href='/register') Register
-  #password-login
-    a(href='/login', style='border: 0px') Login with Password
+  ul#auth_msgs
+    li.auth_msg Not Authenticated
+  #auth_actions
+    #password-login.auth_action
+      a(href='/login') Login
+    #register.auth_action
+      a(href='/register') Register
 - else
-  h2 Authenticated
-  h3
-    a(href='/logout') Logout
+  ul#auth_msgs
+    li.auth_msg Authenticated
+  #auth_actions
+    #logout.auth_action
+      a(href='/logout') Logout
