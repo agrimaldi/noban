@@ -93,6 +93,36 @@ vows
   })
 
   .addBatch({
+    'Authenticating': {
+      topic: api.get(browser, '/login')
+
+    , 'with correct credentials': {
+        topic: macros.fill_submit({ login: 'existant', password: 'password' })
+
+      , 'should respond with 200 OK': macros.assert_status(200)
+
+      , 'should redirect to /': function(_, res, $) {
+        }
+      , 'should inform the user he is logged in': function(_, res, $) {
+          browser.text('h2').should.equal('Authenticated');
+        }
+      , 'should provide a way to log out': function(_, res, $) {
+          $('a').should.have.attr('href', '/logout');
+        }
+      , 'and then logging out': {
+          topic: api.get(browser, '/logout')
+
+        , 'should respond with 200 OK': macros.assert_status(200)
+
+        , 'should warn the user he is no longer authenticated': function(_, res, $) {
+            browser.text('h2').should.equal('Not Authenticated');
+          }
+        }
+      }
+    }
+  })
+
+  .addBatch({
     'Deleting the test user': {
       topic: function() {
         var Player = app.models.Player;
