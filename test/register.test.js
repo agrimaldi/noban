@@ -12,6 +12,8 @@ var vows = require('vows')
 vows
   .describe('Register')
 
+
+
   .addBatch({
     'The register page': {
       topic: api.get(browser, '/register')
@@ -54,4 +56,43 @@ vows
         }
       }
     }
-  }).export(module);
+  })
+
+  .addBatch({
+    'Registering': {
+      topic: api.get(browser, '/register')
+
+    , 'with valid informations': {
+        topic: macros.fill_submit({
+          login: 'newregisteredplayer'
+        , password: 'password'
+        , 'name.first': 'newregist'
+        , 'name.last': 'erdplayer'
+        , email: 'newregisteredplayer@dom.com'
+        })
+
+      , 'should respond with 200 OK': macros.assert_status(200)
+
+      , 'should redirect to /': function(_, res, $) {
+        }
+      , 'should tell the new player he is logged in':  function(_, res, $) {
+          browser.text('h2').should.equal('Authenticated');
+        }
+      }
+    }
+  })
+
+  .addBatch({
+    'Deleting the test user': {
+      topic: function() {
+        var Player = app.models.Player;
+        Player.findOne({ login: 'newregisteredplayer' }, this.callback);
+      }
+
+    , 'should properly delete the test user': function(player) {
+        player.remove();
+      }
+    }
+  })
+  
+  .export(module);

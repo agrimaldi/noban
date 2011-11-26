@@ -14,18 +14,14 @@ vows
 
   .addBatch({
     'Creating test user': {
-      topic: function() {
-        var player = new app.models.Player({
-          name: {
-            first: 'exis'
-          , last: 'tant'
-          }
-        , login: 'existant'
-        , email: 'existant@somewhere.com'
-        });
-        player.password = 'password';
-        player.save(this.callback);
-      }
+      topic: macros.create_user({
+        name: {
+          first: 'exis'
+        , last: 'tant'
+        }
+      , login: 'existant'
+      , email: 'existant@somewhere.com'
+      }, 'password')
 
     , 'should provide a test user to the database': function(player) {
         player.should.have.property('login', 'existant');
@@ -130,7 +126,17 @@ vows
       }
 
     , 'should properly delete the test user': function(player) {
-        player.remove();
+        player.remove(this.callback);
+      }
+    , 'and trying to find it again in the database': {
+        topic: function() {
+          var Player = app.models.Player;
+          Player.findOne({ login: 'existant' }, this.callback);
+        }
+
+      , 'should result in no results': function(player) {
+          should.not.exist(player);
+        }
       }
     }
   })

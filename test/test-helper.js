@@ -1,4 +1,5 @@
-var should = require('should');
+var should = require('should')
+  , app = require('../app');
 
 /**
  * API requests
@@ -35,6 +36,14 @@ var macros = {
       $('form')
         .fill(credentials)
         .submit(this.callback.bind(this, null));
+    }
+  }
+
+, 'create_user': function(info, pwd) {
+    return function() {
+      var player = new app.models.Player(info);
+      player.password = pwd;
+      player.save(this.callback);
     }
   }
 }
