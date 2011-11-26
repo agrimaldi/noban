@@ -100,6 +100,29 @@ vows
     'Registering': {
       topic: api.get(browser, '/register')
 
+    , 'with an unavailable email': {
+        topic: macros.fill_submit({
+          login: 'newregisteredplayer'
+        , password: 'password'
+        , 'name.first': 'newregist'
+        , 'name.last': 'erdplayer'
+        , email: 'existantregistered@somewhere.com'
+        })
+
+      , 'should respond with 200 OK': macros.assert_status(200)
+
+      , 'should warn that the requested email is not available':  function(_, res, $) {
+          $('ul#errors')
+            .should.have.one('li.error', 'Someone already has claimed that login.')
+        }
+      }
+    }
+  })
+
+  .addBatch({
+    'Registering': {
+      topic: api.get(browser, '/register')
+
     , 'with valid informations': {
         topic: macros.fill_submit({
           login: 'newregisteredplayer'

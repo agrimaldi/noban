@@ -17,7 +17,7 @@ module.exports = function(app, conf) {
       , last: String
       }
     , login: String
-    , email: String
+    , email: { type: String, unique: true}
     , lastConnection: Date
     , joined: Date
     , level: {
@@ -52,7 +52,7 @@ module.exports = function(app, conf) {
           first: String
         , last: String
         }
-      , email: String
+      , email: { type: String, unique: true }
       }
     , everyauth: {
         getLoginPath: '/login'
