@@ -39,11 +39,16 @@ var macros = {
     }
   }
 
-, 'create_user': function(info, pwd) {
+, 'create_player': function(info, pwd) {
     return function() {
       var player = new app.models.Player(info);
       player.password = pwd;
       player.save(this.callback);
+    }
+  }
+, 'find_player': function(login) {
+    return function() {
+      app.models.Player.findOne({ login: login }, this.callback);
     }
   }
 }

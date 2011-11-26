@@ -13,8 +13,8 @@ vows
   .describe('Login')
 
   .addBatch({
-    'Creating test user': {
-      topic: macros.create_user({
+    'Creating test player': {
+      topic: macros.create_player({
         name: {
           first: 'exis'
         , last: 'tant'
@@ -23,7 +23,7 @@ vows
       , email: 'existant@somewhere.com'
       }, 'password')
 
-    , 'should provide a test user to the database': function(player) {
+    , 'should provide a test player to the database': function(player) {
         player.should.have.property('login', 'existant');
       }
     }
@@ -126,22 +126,16 @@ vows
   })
 
   .addBatch({
-    'Finding the test user': {
-      topic: function() {
-        var Player = app.models.Player;
-        Player.findOne({ login: 'existant' }, this.callback);
-      }
+    'Finding the test player': {
+      topic: macros.find_player('existant')
 
     , 'and deleting it': function(player) {
         player.remove(this.callback);
       }
     , 'after it has been deleted': {
-        topic: function() {
-          var Player = app.models.Player;
-          Player.findOne({ login: 'existant' }, this.callback);
-        }
+        topic: macros.find_player('existant')
 
-      , 'should yield in no results': function(player) {
+      , 'should yield no results': function(player) {
           should.not.exist(player);
         }
       }
