@@ -12,7 +12,22 @@ var vows = require('vows')
 vows
   .describe('Register')
 
+  .addBatch({
+    'Creating test player': {
+      topic: macros.create_player({
+        name: {
+          first: 'exis'
+        , last: 'tant'
+        }
+      , login: 'existantregistered'
+      , email: 'existantregistered@somewhere.com'
+      }, 'password')
 
+    , 'should provide a test player to the database': function(player) {
+        player.should.have.property('login', 'existantregistered');
+      }
+    }
+  })
 
   .addBatch({
     'The register page': {
@@ -73,24 +88,48 @@ vows
 
       , 'should respond with 200 OK': macros.assert_status(200)
 
-      , 'should redirect to /': function(_, res, $) {
-        }
       , 'should tell the new player he is logged in':  function(_, res, $) {
-          browser.text('h2').should.equal('Authenticated');
+          $('ul#auth_msgs')
+            .should.have.one('li.auth_msg', 'Authenticated')
+        }
+      , 'and finding the new player in the database': {
+          topic: macros.find_player('newregisteredplayer')
+        
+        , 'should result in one hit': function(player) {
+            should.exist(player);
+          }
         }
       }
     }
   })
 
   .addBatch({
-    'Deleting the test user': {
-      topic: function() {
-        var Player = app.models.Player;
-        Player.findOne({ login: 'newregisteredplayer' }, this.callback);
-      }
+    'Finding the existant test player': {
+      topic: macros.find_player('existantregistered')
 
-    , 'should properly delete the test user': function(player) {
-        player.remove();
+    , 'and deleting it': function(player) {
+        player.remove(this.callback);
+      }
+    , 'after it has been deleted': {
+        topic: macros.find_player('existantregistered')
+
+      , 'should yield no results': function(player) {
+          should.not.exist(player);
+        }
+      }
+    }
+  , 'Finding the newly registerd player': {
+      topic: macros.find_player('newregisteredplayer')
+
+    , 'and deleting it': function(player) {
+        player.remove(this.callback);
+      }
+    , 'after it has been deleted': {
+        topic: macros.find_player('newregisteredplayer')
+
+      , 'should yield no results': function(player) {
+          should.not.exist(player);
+        }
       }
     }
   })
