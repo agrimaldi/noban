@@ -19,10 +19,10 @@ module.exports = function(app, conf) {
     , login: String
     , email: { type: String, unique: true}
     , lastConnection: Date
-    , joined: Date
+    , joined: {type: Date, default: Date.now }
     , level: {
-        kyu: Number
-      , dan: Number
+        kyu: { type: Number, default: 30 }
+      , dan: { type:Number, default: 0 }
       }
     , games: {
         won: [{ type: ObjectId, ref: 'GameSchema' }]

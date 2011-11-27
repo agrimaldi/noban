@@ -13,7 +13,7 @@ module.exports = function(app, conf) {
    */
   var GameSchema = new Schema({
       title: String
-    , date: Date
+    , date: { type: Date, default: Date.now }
     , size: Number
     , creator: { type: ObjectId, ref: 'PlayerSchema' }
     , players: {
