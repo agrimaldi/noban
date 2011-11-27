@@ -72,11 +72,19 @@ mongooseAuth.helpExpress(app);
 
 
 /**
+ * Route Middlewares
+ */
+app.middlewares                   = {}
+app.middlewares.mustBeLoggedIn    = require('./middlewares').mustBeLoggedIn;
+
+
+/**
  * Load Controllers
  */
-app.controllers         = {}
-app.controllers.app     = require('./controllers/AppController')(app, settings);
-app.controllers.error   = require('./controllers/ErrorController')(app, settings);
+app.controllers             = {}
+app.controllers.app         = require('./controllers/AppController')(app, settings);
+app.controllers.error       = require('./controllers/ErrorController')(app, settings);
+app.controllers.rooms       = require('./controllers/RoomsController')(app, settings);
 
 
 /**
