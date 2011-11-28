@@ -13,16 +13,18 @@ module.exports = function(app, conf) {
    */
   var GameSchema = new Schema({
       title: String
-    , date: { type: Date, default: Date.now }
+    , creationDate: { type: Date, default: Date.now }
     , size: Number
-    , creator: { type: ObjectId, ref: 'PlayerSchema' }
+    , open: { type: Boolean, default: true }
+    , finished: { type: Boolean, default: false }
+    , creator: [{ type: ObjectId, ref: 'PlayerSchema' }]
     , players: {
-        black: { type: ObjectId, ref: 'PlayerSchema' }
-      , white: { type: ObjectId, ref: 'PlayerSchema' }
+        black: [{ type: ObjectId, ref: 'PlayerSchema' }]
+      , white: [{ type: ObjectId, ref: 'PlayerSchema' }]
       , watchers: [{ type: ObjectId, ref: 'PlayerSchema' }]
       }
-    , winner: { type: ObjectId, ref: 'PlayerSchema' }
-    , loser: { type: ObjectId, ref: 'PlayerSchema' }
+    , winner: [{ type: ObjectId, ref: 'PlayerSchema' }]
+    , loser: [{ type: ObjectId, ref: 'PlayerSchema' }]
     , level: {
         min: {
           kyu: Number
@@ -40,8 +42,17 @@ module.exports = function(app, conf) {
   /**
    * Methods
    */
-  GameSchema.statics.findByTitle = function (title, callback) {
+  GameSchema.statics.findByTitle = function(title, callback) {
     return this.find({ title: title }, callback);
+  }
+
+  GameSchema.statics.findAvailable = function(callback) {
+    return this.find({
+      open: true
+    , finished: false
+    })
+      .sort('creationDate', 'descending')
+      .execFind(callback)
   }
 
 

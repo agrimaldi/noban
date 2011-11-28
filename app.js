@@ -2,6 +2,7 @@
  * Module dependencies
  */
 var util                                          = require('util')
+  , sio                                           = require('socket.io')
   , express                                       = require('express');
 
 var app             = module.exports              = express.createServer();
@@ -10,7 +11,8 @@ app.modules                                       = {};
 var everyauth       = app.modules.everyauth       = require('everyauth')
   , mongoose        = app.modules.mongoose        = require('mongoose')
   , mongooseAuth    = app.modules.mongooseAuth    = require('mongoose-auth')
-  , settings                                      = require('./settings');
+  , settings                                      = require('./settings')
+  , io              = app.modules.io              = sio.listen(app);
 
 
 /**
@@ -84,7 +86,7 @@ app.middlewares.mustBeLoggedIn    = require('./middlewares').mustBeLoggedIn;
 app.controllers             = {}
 app.controllers.app         = require('./controllers/AppController')(app, settings);
 app.controllers.error       = require('./controllers/ErrorController')(app, settings);
-app.controllers.rooms       = require('./controllers/RoomsController')(app, settings);
+app.controllers.games       = require('./controllers/GamesController')(app, settings);
 
 
 /**
