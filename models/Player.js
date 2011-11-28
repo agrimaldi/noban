@@ -61,8 +61,8 @@ module.exports = function(app, conf) {
       , getRegisterPath: '/register'
       , postRegisterPath: '/register'
       , registerView: 'register.jade'
-      , loginSuccessRedirect: '/'
-      , registerSuccessRedirect: '/'
+      , loginSuccessRedirect: '/games'
+      , registerSuccessRedirect: '/account'
       }
     }
   });
@@ -71,17 +71,30 @@ module.exports = function(app, conf) {
   /**
    * Methods
    */
-  PlayerSchema.statics.findByNick = function (nickname, callback) {
+  PlayerSchema.statics.findByNick = function(nickname, callback) {
     return this.find({
       nickname: nickname
     }, callback);
   }
 
-  PlayerSchema.methods.findStrongerOpponent = function (callback) {
+  PlayerSchema.methods.findStrongerOpponent = function(callback) {
     return this
       .where('kyulevel').lte(this.kyulevel)
       .where('danlevel').lte(this.danlevel)
       .run(callback);
+  }
+
+  PlayerSchema.methods.createGame = function(data, callback) {
+    var that = this
+      , game = new app.models.Game(data);
+    game.creator = that;
+    game.save(function(err) {
+      if (err) throw err;
+      that.games.current.push(game);
+      that.save(function(err) {
+        if (err) throw err;
+      });
+    });
   }
 
 

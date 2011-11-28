@@ -1,4 +1,12 @@
-script(type="text/javascript", src="/javascripts/games.js")
+script(type='text/javascript', src='/javascripts/games.js')
+#create_game
+  input(type='button', value='Create Game', id='trigger_create_game')
+  form#create_game_form(method= 'post', name='create_game')
+    input.create_game_field(type='text', name='title', id='title', value='title', placeHolder='title', required='required')
+    input.create_game_field(type='number', name='size', id='size', value='size', placeHolder='19', required='required')
+    input.create_game_field(type='submit', id='submit', value='Create')
+
+  
 #content
   #games
     ul#games_list

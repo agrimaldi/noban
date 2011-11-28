@@ -85,16 +85,16 @@ app.middlewares.mustBeLoggedIn    = require('./middlewares').mustBeLoggedIn;
  */
 app.controllers             = {}
 app.controllers.app         = require('./controllers/AppController')(app, settings);
-app.controllers.error       = require('./controllers/ErrorController')(app, settings);
+//app.controllers.error       = require('./controllers/ErrorController')(app, settings);
 app.controllers.games       = require('./controllers/GamesController')(app, settings);
 
 
 /**
  * Catch-all 404 handler (No more routes after this one)
  */
-app.get('/*', function(req, res, next) {
-  next(new NotFound('Page not found.'));
-});
+//app.get('/*', function(req, res, next) {
+  //next(new NotFound('Page not found.'));
+//});
 
 
 /**

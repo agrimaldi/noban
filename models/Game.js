@@ -13,18 +13,18 @@ module.exports = function(app, conf) {
    */
   var GameSchema = new Schema({
       title: String
-    , creationDate: { type: Date, default: Date.now }
+    , created_at: { type: Date, default: Date.now }
     , size: Number
     , open: { type: Boolean, default: true }
     , finished: { type: Boolean, default: false }
-    , creator: [{ type: ObjectId, ref: 'PlayerSchema' }]
+    , creator: { type: ObjectId, ref: 'PlayerSchema' }
     , players: {
-        black: [{ type: ObjectId, ref: 'PlayerSchema' }]
-      , white: [{ type: ObjectId, ref: 'PlayerSchema' }]
+        black: { type: ObjectId, ref: 'PlayerSchema' }
+      , white: { type: ObjectId, ref: 'PlayerSchema' }
       , watchers: [{ type: ObjectId, ref: 'PlayerSchema' }]
       }
-    , winner: [{ type: ObjectId, ref: 'PlayerSchema' }]
-    , loser: [{ type: ObjectId, ref: 'PlayerSchema' }]
+    , winner: { type: ObjectId, ref: 'PlayerSchema' }
+    , loser: { type: ObjectId, ref: 'PlayerSchema' }
     , level: {
         min: {
           kyu: Number
@@ -52,7 +52,7 @@ module.exports = function(app, conf) {
     , finished: false
     })
       .sort('creationDate', 'descending')
-      .execFind(callback)
+      .execFind(callback);
   }
 
 
