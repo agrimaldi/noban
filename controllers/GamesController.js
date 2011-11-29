@@ -5,21 +5,18 @@ var GamesController = function(app, conf) {
   this.app    = app;
   this.conf   = conf;
   
+  
   // GET Routes.
   app.get('/games', app.middlewares.mustBeLoggedIn, this.index);
-  app.get('/games/:id'
-          , app.middlewares.mustBeLoggedIn
-          , app.models.Game.findById
-          , this.game);
+  app.get('/games/:id', app.middlewares.mustBeLoggedIn, this.game);
   
   // POST Routes.
-  app.post('/games', app.middlewares.mustBeLoggedIn, this.createGame);
   
   // PUT Routes.
   
   // DELETE Routes.
+};
 
-}
 
 /**
  * Index Page.
@@ -29,28 +26,44 @@ GamesController.prototype.index = function(req, res) {
     req.app.models.Game.findAvailable(function(err, games) {
       socket.emit('games', games);
     });
+    socket.on('newgame', function(data) {
+      createGame(data, req);
+    });
   });
   res.render('games');
-}
+};
 
 /**
  * Game Page.
  */
 GamesController.prototype.game = function(req, res) {
-  res.render('game');
-}
+  refresh(req.app);
+  req.app.models.Game.findById(req.params.id, function(err, game) {
+    res.render('game', game);
+  });
+};
+
 
 /**
  * Create a new game
  */
-GamesController.prototype.createGame = function(req, res) {
-  req.app.models.Player.findById(req.user._id, function(err, player) {
-    if (err) throw err;
-    player.createGame(req.body);
+var createGame = function(data, req) {
+  var player = req.app.models.Player.findById(req.user._id, function(err, player) {
+    player.createGame(data, function(err, game) {
+      refresh(req.app);
+    });
   });
-  // broadcast the new game
-  res.send();
-}
+};
+
+
+/**
+ * Refresh available games
+ */
+var refresh = function(app) {
+  app.models.Game.findAvailable(function(err, games) {
+    app.modules.io.sockets.emit('games', games);
+  });
+};
 
 
 // Export a new instance of a RoomController.

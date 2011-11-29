@@ -80,7 +80,7 @@ module.exports = function(app, conf) {
   PlayerSchema.methods.findStrongerOpponent = function(callback) {
     return this
       .where('kyulevel').lte(this.kyulevel)
-      .where('danlevel').lte(this.danlevel)
+      .where('danlevel').gte(this.danlevel)
       .run(callback);
   }
 
@@ -92,7 +92,7 @@ module.exports = function(app, conf) {
       if (err) throw err;
       that.games.current.push(game);
       that.save(function(err) {
-        if (err) throw err;
+        callback(err, game._id);
       });
     });
   }
