@@ -18,6 +18,10 @@ module.exports = function(app, conf) {
     , open: { type: Boolean, default: true }
     , finished: { type: Boolean, default: false }
     , creator: { type: ObjectId, ref: 'PlayerSchema' }
+    , turns: {
+        black: [String]
+      , white: [String]
+      }
     , players: {
         black: { type: ObjectId, ref: 'PlayerSchema' }
       , white: { type: ObjectId, ref: 'PlayerSchema' }

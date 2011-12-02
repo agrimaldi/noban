@@ -97,6 +97,25 @@ module.exports = function(app, conf) {
     });
   }
 
+  PlayerSchema.methods.joinGame = function(game, callback) {
+    var that = this;
+    that.games.current.push(game);
+    that.save(function(err) {
+      callback(err);
+    });
+  }
+
+  PlayerSchema.methods.leaveGame = function(gameId, callback) {
+    var that = this
+      , idx = that.games.current.indexOf(gameId);
+    if (idx != -1) {
+      that.games.current.splice(idx, 1);
+    }
+    that.save(function(err) {
+      callback(err);
+    });
+  }
+
 
   /**
    * Define model.

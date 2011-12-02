@@ -8,7 +8,8 @@ var util                                          = require('util')
 var app             = module.exports              = express.createServer();
 app.modules                                       = {};
 
-var everyauth       = app.modules.everyauth       = require('everyauth')
+var parseCookie     = app.modules.parseCookie     = require('connect').utils.parseCookie
+  , everyauth       = app.modules.everyauth       = require('everyauth')
   , mongoose        = app.modules.mongoose        = require('mongoose')
   , mongooseAuth    = app.modules.mongooseAuth    = require('mongoose-auth')
   , settings                                      = require('./settings')
@@ -33,7 +34,10 @@ app.configure(function() {
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
-  app.use(express.session({ secret: 'hariom' }));
+  app.use(express.session({
+    key: 'hariom'
+  , secret: 'tatsat'
+  }));
   app.use(mongooseAuth.middleware());
   //app.use(stylus.middleware({
     //src: __dirname + '/public'
@@ -64,6 +68,27 @@ app.configure('test', function() {
 app.configure('production', function() {
   app.use(express.errorHandler()); 
   app.db.connect(settings.mongodb.uri.production);
+});
+
+
+/**
+ * socket.io authentication setup
+ */
+app.modules.io.set('authorization', function (data, accept) {
+    // check if there's a cookie header
+    if (data.headers.cookie) {
+        // if there is, parse the cookie
+        data.cookie = parseCookie(data.headers.cookie);
+        // note that you will need to use the same key to grad the
+        // session id, as you specified in the Express setup.
+        data.sessionID = data.cookie['hariom'];
+    } else {
+       // if there isn't, turn down the connection with a message
+       // and leave the function.
+       return accept('No cookie transmitted.', false);
+    }
+    // accept the incoming connection
+    accept(null, true);
 });
 
 
