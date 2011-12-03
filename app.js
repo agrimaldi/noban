@@ -13,6 +13,7 @@ var parseCookie     = app.modules.parseCookie     = require('connect').utils.par
   , mongoose        = app.modules.mongoose        = require('mongoose')
   , mongooseAuth    = app.modules.mongooseAuth    = require('mongoose-auth')
   , settings                                      = require('./settings')
+  , sessionStore    = app.sessionStore            = new express.session.MemoryStore()
   , io              = app.modules.io              = sio.listen(app);
 
 
@@ -35,7 +36,8 @@ app.configure(function() {
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({
-    key: 'hariom'
+    store: sessionStore
+  , key: 'hariom'
   , secret: 'tatsat'
   }));
   app.use(mongooseAuth.middleware());
@@ -75,20 +77,20 @@ app.configure('production', function() {
  * socket.io authentication setup
  */
 app.modules.io.set('authorization', function (data, accept) {
-    // check if there's a cookie header
-    if (data.headers.cookie) {
-        // if there is, parse the cookie
-        data.cookie = parseCookie(data.headers.cookie);
-        // note that you will need to use the same key to grad the
-        // session id, as you specified in the Express setup.
-        data.sessionID = data.cookie['hariom'];
-    } else {
-       // if there isn't, turn down the connection with a message
-       // and leave the function.
-       return accept('No cookie transmitted.', false);
-    }
-    // accept the incoming connection
-    accept(null, true);
+  if (data.headers.cookie) {
+    data.cookie = parseCookie(data.headers.cookie);
+    data.sessionID = data.cookie['hariom'];
+    sessionStore.get(data.sessionID, function (err, session) {
+      if (err || !session) {
+        accept('Error', false);
+      } else {
+        data.session = session;
+        accept(null, true);
+      }
+    });
+  } else {
+    return accept('No cookie transmitted.', false);
+  }
 });
 
 

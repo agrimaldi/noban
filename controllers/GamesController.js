@@ -1,6 +1,4 @@
-var async = require('async')
-  , _ = require('underscore')
-  , utils = require('../lib/utils');
+  var _ = require('underscore');
 
 /**
  * Games page Controller.
@@ -17,23 +15,10 @@ var GamesController = function(app, conf) {
   // REST routes
   app.get('/games', app.middlewares.mustBeLoggedIn, that.index);
   
+  that.gamesPage();
+  that.gamePage();
+
   // socket.io
-  that.games
-    .on('connection', function(socket) {
-      that.refresh(socket);
-      socket.on('newgame', function(data) {
-        that.createGame(data);
-      });
-    });
-  that.game
-    .on('connection', function(socket) {
-      socket.on('joingame', function(gameId) {
-        that.joinGame(socket, gameId);
-      });
-      socket.on('leavegame', function(gameId) {
-        that.leaveGame(socket, gameId);
-      });
-    });
       //req.app.models.Player.joinGame(gameId, function(err) {
       //});
       //socket.set('info', req.user, function() {
@@ -55,6 +40,41 @@ GamesController.prototype.index = function(req, res) {
 };
 
 /**
+ * socket.io for /games
+ */
+GamesController.prototype.gamesPage = function() {
+  var that = this;
+  that.games
+    .on('connection', function(socket) {
+      var playerId = socket.handshake.session.auth.userId
+      that.refresh(socket);
+      // New Game
+      socket.on('newgame', function(data) {
+        that.createGame(data);
+      });
+    });
+}
+
+/**
+ * socket.io for /games
+ */
+GamesController.prototype.gamePage = function() {
+  var that = this;
+  that.game
+    .on('connection', function(socket) {
+      var playerId = socket.handshake.session.auth.userId
+      // Join Game
+      socket.on('joingame', function(gameId) {
+        that.joinGame(socket, gameId);
+      });
+      // Leave Game
+      socket.on('leavegame', function(gameId) {
+        that.leaveGame(socket, gameId);
+      });
+    });
+}
+
+/**
  * Create a new game
  */
 GamesController.prototype.createGame = function(data) {
@@ -69,7 +89,10 @@ GamesController.prototype.createGame = function(data) {
  * Join a game
  */
 GamesController.prototype.joinGame = function(socket, gameId) {
+  var that = this;
   socket.join(gameId);
+  
+  that.game.in(gameId).emit('players_list', 'bla');
   socket.emit('gamejoined', "you've joined #" + gameId);
 };
 
