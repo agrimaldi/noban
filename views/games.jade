@@ -1,5 +1,6 @@
-script(type='text/javascript', src='/js/application.js')
-//script(type='text/javascript', src='/js/client.js')
+block append head
+  //script(type='text/javascript', src='/js/client.js')
+  script(type='text/javascript', src='/js/application.js')
 #content
   #create_game
     input(type='button', value='Create Game', id='trigger_create_game')

@@ -46,10 +46,9 @@ GamesController.prototype.gamesPage = function() {
   var that = this;
   that.games
     .on('connection', function(socket) {
-      var playerId = socket.handshake.session.auth.userId
       that.refresh(socket);
       // New Game
-      socket.on('newgame', function(data) {
+      socket.on('game:new', function(data) {
         that.createGame(socket, data);
       });
     });
@@ -63,11 +62,11 @@ GamesController.prototype.gamePage = function() {
   that.game
     .on('connection', function(socket) {
       // Join Game
-      socket.on('joingame', function(socket, gameId) {
+      socket.on('game:join', function(gameId) {
         that.joinGame(socket, gameId);
       });
       // Leave Game
-      socket.on('leavegame', function(gameId) {
+      socket.on('game:leave', function(gameId) {
         that.leaveGame(socket, gameId);
       });
     });
@@ -96,7 +95,7 @@ GamesController.prototype.joinGame = function(socket, gameId) {
     player.joinGame(gameId);
   });
   socket.join(gameId);
-  socket.emit('gamejoined', "you've joined #" + gameId);
+  socket.emit('game:joined', "you've joined #" + gameId);
   that.game.in(gameId).emit('players_list', 'bla');
 };
 
@@ -110,7 +109,7 @@ GamesController.prototype.leaveGame = function(socket, gameId) {
     player.leaveGame(gameId);
   });
   socket.leave(gameId);
-  socket.emit('gameleft', "you've left #" + gameId);
+  socket.emit('game:left', "you've left #" + gameId);
 };
 
 /**
