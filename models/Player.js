@@ -89,11 +89,7 @@ module.exports = function(app, conf) {
       , game = new app.models.Game(data);
     game.creator = that;
     game.save(function(err) {
-      if (err) throw err;
-      that.games.current.push(game);
-      that.save(function(err) {
-        callback(err, game._id);
-      });
+      callback(err, game._id);
     });
   }
 
@@ -112,6 +108,7 @@ module.exports = function(app, conf) {
       that.games.current.splice(idx, 1);
     }
     that.save(function(err) {
+      // TODO: if player is game creator, delete the game
       callback(err);
     });
   }

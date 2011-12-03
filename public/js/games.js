@@ -1,4 +1,4 @@
-//$(document).ready(function () {
+$(document).ready(function () {
 var games = io.connect('/games')
   , game = io.connect('/game')
 
@@ -46,9 +46,9 @@ $('#leave_button').click(function(e) {
 
 $('#create_game_form').submit(function(e) {
   e.preventDefault();
-  socket.emit('newgame', {
+  games.emit('newgame', {
     title: $('#title').val()
   , size: $('#size').val()
   });
 });
-//});
+});

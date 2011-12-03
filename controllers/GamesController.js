@@ -50,21 +50,20 @@ GamesController.prototype.gamesPage = function() {
       that.refresh(socket);
       // New Game
       socket.on('newgame', function(data) {
-        that.createGame(data);
+        that.createGame(socket, data);
       });
     });
 }
 
 /**
- * socket.io for /games
+ * socket.io for /game
  */
 GamesController.prototype.gamePage = function() {
   var that = this;
   that.game
     .on('connection', function(socket) {
-      var playerId = socket.handshake.session.auth.userId
       // Join Game
-      socket.on('joingame', function(gameId) {
+      socket.on('joingame', function(socket, gameId) {
         that.joinGame(socket, gameId);
       });
       // Leave Game
@@ -77,10 +76,12 @@ GamesController.prototype.gamePage = function() {
 /**
  * Create a new game
  */
-GamesController.prototype.createGame = function(data) {
-  var player = req.app.models.Player.findById(req.user._id, function(err, player) {
-    player.createGame(data, function(err, game) {
-      refresh(req.app);
+GamesController.prototype.createGame = function(socket, data) {
+  var that = this
+    , playerId = socket.handshake.session.auth.userId;
+  that.app.models.Player.findById(playerId, function(err, player) {
+    player.createGame(data, function(err, gameId) {
+      that.refresh(socket);
     });
   });
 };
@@ -89,17 +90,25 @@ GamesController.prototype.createGame = function(data) {
  * Join a game
  */
 GamesController.prototype.joinGame = function(socket, gameId) {
-  var that = this;
+  var that = this
+    , playerId = socket.handshake.session.auth.userId;
+  that.app.models.Player.findById(playerId, function(err, player) {
+    player.joinGame(gameId);
+  });
   socket.join(gameId);
-  
-  that.game.in(gameId).emit('players_list', 'bla');
   socket.emit('gamejoined', "you've joined #" + gameId);
+  that.game.in(gameId).emit('players_list', 'bla');
 };
 
 /**
  * Leave a game
  */
 GamesController.prototype.leaveGame = function(socket, gameId) {
+  var that = this
+    , playerId = socket.handshake.session.auth.userId;
+  that.app.models.Player.findById(playerId, function(err, player) {
+    player.leaveGame(gameId);
+  });
   socket.leave(gameId);
   socket.emit('gameleft', "you've left #" + gameId);
 };
