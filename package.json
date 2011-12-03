@@ -21,6 +21,7 @@
   , "socket.io": "0.8.x"
   , "nib": "0.3.x"
   , "cluster": "0.7.x"
+  , "underscore": "1.2.x"
   }
 , "devDependencies": {
     "vows": "0.5.x"
