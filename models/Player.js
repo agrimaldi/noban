@@ -93,12 +93,17 @@ module.exports = function(app, conf) {
     });
   }
 
-  PlayerSchema.methods.joinGame = function(game, callback) {
-    var that = this;
-    that.games.current.push(game);
-    that.save(function(err) {
-      callback(err);
-    });
+  PlayerSchema.methods.joinGame = function(gameId, callback) {
+    var that = this
+      , idx = that.games.current.indexOf(gameId);
+    if (idx === -1) {
+      that.games.current.push(gameId);
+      that.save(function(err) {
+        if (callback) callback(err);
+      });
+    } else {
+      if (callback) callback(err);
+    }
   }
 
   PlayerSchema.methods.leaveGame = function(gameId, callback) {
