@@ -10,10 +10,10 @@
   });
 
   var GameListView = Backbone.View.extend({
-    el: $('#games_available')
+    el: $('#main')
   , socket: io.connect('/games')
   , events: {
-      'submit create_game_form': 'createGame'
+      'submit #create_game_form': 'createGame'
     }
   , initialize: function(){
       _.bindAll(this, 'render', 'createGame', 'appendItem');
@@ -30,12 +30,14 @@
         appendItem(item);
       }, this);
     }
-  , createGame: function() {
+  , createGame: function(e) {
+      e.preventDefault();
       console.log('im heere');
-      this.socket.emit('newgame', {
-        title: $('#title').val()
-      , size: $('#size').val()
-      });
+      //this.socket.emit('newgame', {
+        //title: $('#title').val()
+      //, size: $('#size').val()
+      //});
+      return false;
     }
   , appendItem: function(item){
       $('ul', this.el).append("<li>"+item.get('part1')+" "+item.get('part2')+"</li>");
