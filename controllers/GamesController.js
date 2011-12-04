@@ -10,13 +10,13 @@ var GamesController = function(app, conf) {
   that.conf   = conf;
   that.io     = app.modules.io;
   that.games  = that.io.of('/games');
-  that.game   = that.io.of('/game');
+  //that.game   = that.io.of('game');
   
   // REST routes
   app.get('/games', app.middlewares.mustBeLoggedIn, that.index);
   
   that.gamesPage();
-  that.gamePage();
+  //that.gamePage();
 
   // socket.io
       //req.app.models.Player.joinGame(gameId, function(err) {
@@ -53,12 +53,16 @@ GamesController.prototype.gamesPage = function() {
         });
       });
       
-      //that.refresh(socket);
-
       // New Game
-      socket.on('games:create', function(data) {
-        that.createGame(socket, data);
+      socket.on('game:create', function(data) {
+        console.log(data);
       });
+
+      // Join Game
+      socket.on('games:update', function(data) {
+        that.joinGame(socket, data.id);
+      });
+
     
     });
 }
@@ -70,13 +74,6 @@ GamesController.prototype.gamePage = function() {
   var that = this;
   that.game
     .on('connection', function(socket) {
-      socket.on('game:update', function(gameId) {
-        console.log(gameId);
-      });
-      // Join Game
-      socket.on('game:join', function(gameId) {
-        that.joinGame(socket, gameId);
-      });
       // Leave Game
       socket.on('game:leave', function(gameId) {
         that.leaveGame(socket, gameId);
@@ -127,12 +124,12 @@ GamesController.prototype.leaveGame = function(socket, gameId) {
 /**
  * Refresh available games
  */
-GamesController.prototype.refresh = function(socket) {
-  var that = this;
-  that.app.models.Game.findAvailable(function(err, games) {
-    that.games.emit('games', games);
-  });
-};
+//GamesController.prototype.refresh = function(socket) {
+  //var that = this;
+  //that.app.models.Game.findAvailable(function(err, games) {
+    //that.games.emit('games', games);
+  //});
+//};
 
 
 // Export a new instance of a RoomController.

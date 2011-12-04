@@ -38,8 +38,6 @@ Minimal.App = Backbone.Router.extend({
     //$('#TodoWrapper').append(form.el);
     
     var list = new Minimal.GameList(games);
-    console.log(games);
-    console.log(list);
     $('#games_available').append(list.el);
     
     games.fetch();
@@ -63,6 +61,7 @@ Minimal.Game = Backbone.Model.extend({
   noIoBind: false,
   socket: window.socket,
   initialize: function () {
+    this.id = this.attributes._id;
     _.bindAll(this, 'serverChange', 'serverDelete', 'modelCleanup');
     
     /*
@@ -80,7 +79,7 @@ Minimal.Game = Backbone.Model.extend({
     data.fromServer = true;
     console.log('serverChange');
     console.log(data);
-    //this.set(data);
+    this.set(data);
   },
   serverDelete: function (data) {
     console.log('serverDelete');
@@ -210,14 +209,15 @@ Minimal.GameList = Backbone.View.extend({
 
 Minimal.GameListItem = Backbone.View.extend({
   className: 'game',
+  socket: window.games,
   events: {
     'click .join': 'joinGame'
     //'click .delete': 'deleteTodo'
   },
   initialize: function (model) {
-    _.bindAll(this, 'joinGame');
+    _.bindAll(this, 'joinGame', 'setStatus');
     this.model = model;
-    //this.model.bind('change:completed', this.setStatus);
+    this.model.bind('joined', this.setStatus);
     this.render();
   },
   render: function () {
@@ -228,25 +228,24 @@ Minimal.GameListItem = Backbone.View.extend({
       '</div>'
     );
     $(this.el).attr('id', this.model.attributes._id);
-    //this.setStatus();
+    this.setStatus();
     return this;
   },
-  //setStatus: function () {
-    //var status = this.model.get('completed');
-    //if (status) {
-      //$(this.el).addClass('complete');
-    //} else {
-      //$(this.el).removeClass('complete');
-    //}
-  //},
+  setStatus: function () {
+    var status = this.model.get('completed');
+    if (status) {
+      $(this.el).addClass('complete');
+    } else {
+      $(this.el).removeClass('complete');
+    }
+  },
   joinGame: function () {
     // here we toggle the completed flag. we do NOT
     // set status (update UI) as we are waiting for
     // the server to instruct us to do so.
     //var status = this.model.get('completed');
     //this.model.save({ completed: !!!status });
-    console.log('joining');
-    this.model.save({test:1234});
+    this.model.save();
   },
 });
 
