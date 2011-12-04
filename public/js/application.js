@@ -25,7 +25,7 @@ Minimal.App = Backbone.Router.extend({
     var games = new Minimal.Games();
     
     var form = new Minimal.GameListForm(games);
-    $('#main').prepend(form.el);
+    //$('#main').prepend(form.el);
     
     var list = new Minimal.GameList(games);
     //$('#main').append(list.el);
@@ -45,40 +45,27 @@ Minimal.App = Backbone.Router.extend({
  */
 
 Minimal.GameListForm = Backbone.View.extend({
-  id: 'create_game'
+  el: '#create_game'
 , events: {
-    'click #create': 'createGame'
+    'submit #create_game_form': 'createGame'
   }
 , initialize: function(games) {
-    console.log('inint');
     _.bindAll(this, 'createGame');
     this.games = games;
     this.render();
   }
 , render: function() {
-    console.log(this);
-    console.log(this.el);
-    console.log($(this.el));
-    $(this.el).html(
-      '<form id="create_game_form" method="post" name="create_game">'+
-        '<input type="text" name="title" id="title" value="title" placeholder="title" required="required" class="create_game_field">'+
-        '<input type="number" name="size" id="size" value="size" placeholder="19" required="required" class="create_game_field">'+
-        '<input type="button" id="create" value="Create" class="create_game_field">'+
-      '</form>'
-    );
     return this;
   }
-, createGame: function(e) {
-    console.log('create');
-    e.preventDefault();
-    //var Game = Minimal.Game.extend({ noIoBind: true });
-    //var attrs = {
-      //title: this.$('#create_game_form input[name="title"]').val()
-    //, size: this.$('#create_game_form input[name="size"]').val()
-    //};
-    ////this.$('#TodoInput input[name="TodoInput"]').val('');
-    //var _game = new Game(attrs);
-    //_game.save();
+, createGame: function() {
+    var Game = Minimal.Game.extend({ noIoBind: true });
+    var attrs = {
+      title: this.$('#create_game_form input[name="title"]').val()
+    , size: this.$('#create_game_form input[name="size"]').val()
+    };
+    //this.$('#TodoInput input[name="TodoInput"]').val('');
+    var _game = new Game(attrs);
+    _game.save();
     return false;
   }
 });
