@@ -46,11 +46,20 @@ GamesController.prototype.gamesPage = function() {
   var that = this;
   that.games
     .on('connection', function(socket) {
-      that.refresh(socket);
+
+      socket.on('games:read', function(data, callback) {
+        that.app.models.Game.findAvailable(function(err, games) {
+          callback(null, games);
+        });
+      });
+      
+      //that.refresh(socket);
+
       // New Game
-      socket.on('game:new', function(data) {
+      socket.on('games:create', function(data) {
         that.createGame(socket, data);
       });
+    
     });
 }
 
@@ -61,6 +70,9 @@ GamesController.prototype.gamePage = function() {
   var that = this;
   that.game
     .on('connection', function(socket) {
+      socket.on('game:update', function(gameId) {
+        console.log(gameId);
+      });
       // Join Game
       socket.on('game:join', function(gameId) {
         that.joinGame(socket, gameId);
