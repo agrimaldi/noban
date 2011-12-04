@@ -56,6 +56,7 @@ GamesController.prototype.gamesPage = function() {
       // New Game
       socket.on('game:create', function(data) {
         console.log(data);
+        //that.createGame(socket, data);
       });
 
       // Join Game
@@ -89,7 +90,7 @@ GamesController.prototype.createGame = function(socket, data) {
     , playerId = socket.handshake.session.auth.userId;
   that.app.models.Player.findById(playerId, function(err, player) {
     player.createGame(data, function(err, gameId) {
-      that.refresh(socket);
+      console.log(gameId);
     });
   });
 };
@@ -104,8 +105,6 @@ GamesController.prototype.joinGame = function(socket, gameId) {
     player.joinGame(gameId);
   });
   socket.join(gameId);
-  socket.emit('game:joined', "you've joined #" + gameId);
-  that.game.in(gameId).emit('players_list', 'bla');
 };
 
 /**

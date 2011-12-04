@@ -25,7 +25,7 @@ module.exports = function(app, conf) {
     , players: {
         black: { type: ObjectId, ref: 'PlayerSchema' }
       , white: { type: ObjectId, ref: 'PlayerSchema' }
-      , watchers: [{ type: ObjectId, ref: 'PlayerSchema' }]
+      , waiting: [{ type: ObjectId, ref: 'PlayerSchema' }]
       }
     , winner: { type: ObjectId, ref: 'PlayerSchema' }
     , loser: { type: ObjectId, ref: 'PlayerSchema' }

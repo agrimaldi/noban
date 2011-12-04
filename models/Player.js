@@ -7,7 +7,6 @@ module.exports = function(app, conf) {
     , ObjectId      = Schema.ObjectId
     , mongooseAuth  = app.modules.mongooseAuth;
 
-
   /**
    * Player Schema
    */
@@ -97,10 +96,17 @@ module.exports = function(app, conf) {
     var that = this
       , idx = that.games.current.indexOf(gameId);
     if (idx === -1) {
-      that.games.current.push(gameId);
-      that.save(function(err) {
-        if (callback) callback(err);
+      app.models.Game.findById(gameId, function(game) {
+        console.log(game);
+        console.log(game.players.black);
+        console.log(game.players.white);
+        console.log(game.players.waiting);
+        //if (game.players.black = null)
       });
+      that.games.current.push(gameId);
+      //that.save(function(err) {
+        //if (callback) callback(err);
+      //});
     } else {
       if (callback) callback(err);
     }
