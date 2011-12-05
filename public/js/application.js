@@ -59,7 +59,7 @@ Minimal.GameListForm = Backbone.View.extend({
   }
 , createGame: function() {
     var Game = Minimal.Game.extend({ noIoBind: true })
-      , _game = new Game({
+    var _game = new Game({
           title: this.$('#create_game_form input[name="title"]').val()
         , size: this.$('#create_game_form input[name="size"]').val()
         });

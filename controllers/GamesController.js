@@ -80,10 +80,10 @@ GamesController.prototype.gamesPage = function() {
        * Handles any interaction with a game item.
        * For the moment, only handle joining.
        */
-      socket.on('games:update', function(data) {
+      socket.on('games:update', function(game) {
         var playerId = socket.handshake.session.auth.userId;
         that.app.models.Player.findById(playerId, function(err, player) {
-          player.joinGame(gameId, function(err, gameId) {
+          player.joinGame(game.id, function(err, gameId) {
             socket.join(gameId);
           });
         });

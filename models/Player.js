@@ -93,22 +93,22 @@ module.exports = function(app, conf) {
   }
 
   PlayerSchema.methods.joinGame = function(gameId, callback) {
-    var that = this
-      , idx = that.games.current.indexOf(gameId);
+    var that    = this;
+    var  idx     = that.games.current.indexOf(gameId);
     if (idx === -1) {
-      app.models.Game.findById(gameId, function(game) {
-        console.log(game);
-        console.log(game.players.black);
-        console.log(game.players.white);
-        console.log(game.players.waiting);
-        //if (game.players.black = null)
+      app.models.Game.findById(gameId, function(err, game) {
+        game.players.waiting.push(that);
+        game.save(function(err) {
+          if (callback) callback(err);
+        });
       });
       that.games.current.push(gameId);
-      //that.save(function(err) {
-        //if (callback) callback(err);
-      //});
+      that.save(function(err) {
+        if (callback) callback(err);
+      });
     } else {
-      if (callback) callback(err);
+      // TODO: throw error "game already joined"
+      if (callback) callback(null);
     }
   }
 
