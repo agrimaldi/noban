@@ -58,13 +58,12 @@ Minimal.GameListForm = Backbone.View.extend({
     return this;
   }
 , createGame: function() {
-    var Game = Minimal.Game.extend({ noIoBind: true });
-    var attrs = {
-      title: this.$('#create_game_form input[name="title"]').val()
-    , size: this.$('#create_game_form input[name="size"]').val()
-    };
-    //this.$('#TodoInput input[name="TodoInput"]').val('');
-    var _game = new Game(attrs);
+    var Game = Minimal.Game.extend({ noIoBind: true })
+      , _game = new Game({
+          title: this.$('#create_game_form input[name="title"]').val()
+        , size: this.$('#create_game_form input[name="size"]').val()
+        });
+    this.$('#create_game_form input:not([type="submit"])').val('');
     _game.save();
     return false;
   }

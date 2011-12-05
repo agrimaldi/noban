@@ -47,21 +47,46 @@ GamesController.prototype.gamesPage = function() {
   that.games
     .on('connection', function(socket) {
 
+      /**
+       * games:read
+       *
+       * Called  when we .fetch() our collection
+       * in the client-side router
+       */
       socket.on('games:read', function(data, callback) {
         that.app.models.Game.findAvailable(function(err, games) {
           callback(null, games);
         });
       });
       
-      // New Game
-      socket.on('game:create', function(data) {
-        console.log(data);
-        //that.createGame(socket, data);
+      /**
+       * games:create
+       *
+       * Called  when we .save() a new game.
+       */
+      socket.on('game:create', function(data, callback) {
+        var playerId = socket.handshake.session.auth.userId;
+        that.app.models.Player.findById(playerId, function(err, player) {
+          player.createGame(data, function(err, data) {
+            that.games.emit('games:create', data);
+            callback(null, data);
+          });
+        });
       });
 
-      // Join Game
+      /**
+       * games:update
+       *
+       * Handles any interaction with a game item.
+       * For the moment, only handle joining.
+       */
       socket.on('games:update', function(data) {
-        that.joinGame(socket, data.id);
+        var playerId = socket.handshake.session.auth.userId;
+        that.app.models.Player.findById(playerId, function(err, player) {
+          player.joinGame(gameId, function(err, gameId) {
+            socket.join(gameId);
+          });
+        });
       });
 
     
@@ -82,29 +107,11 @@ GamesController.prototype.gamePage = function() {
     });
 }
 
-/**
- * Create a new game
- */
-GamesController.prototype.createGame = function(socket, data) {
-  var that = this
-    , playerId = socket.handshake.session.auth.userId;
-  that.app.models.Player.findById(playerId, function(err, player) {
-    player.createGame(data, function(err, gameId) {
-      console.log(gameId);
-    });
-  });
-};
 
 /**
  * Join a game
  */
 GamesController.prototype.joinGame = function(socket, gameId) {
-  var that = this
-    , playerId = socket.handshake.session.auth.userId;
-  that.app.models.Player.findById(playerId, function(err, player) {
-    player.joinGame(gameId);
-  });
-  socket.join(gameId);
 };
 
 /**

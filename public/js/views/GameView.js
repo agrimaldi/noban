@@ -7,7 +7,7 @@
  */
 
 var GameList = Backbone.View.extend({
-  id: 'games_available',
+  el: '#games_available',
   initialize: function(games) {
     _.bindAll(this, 'render', 'addGame', 'removeGame');
     
@@ -34,8 +34,6 @@ var GameList = Backbone.View.extend({
     return this;
   },
   addGame: function (game) {
-    console.log('addGame');
-    console.log(game);
     var tdv = new Minimal.GameListItem(game);
     $(this.el).append(tdv.el);
   },

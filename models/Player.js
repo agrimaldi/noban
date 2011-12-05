@@ -88,7 +88,7 @@ module.exports = function(app, conf) {
       , game = new app.models.Game(data);
     game.creator = that;
     game.save(function(err) {
-      callback(err, game._id);
+      callback(err, game);
     });
   }
 

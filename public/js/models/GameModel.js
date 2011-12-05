@@ -68,16 +68,14 @@ var Games = Backbone.Collection.extend({
     this.ioBind('create', this.serverCreate, this);
   },
   serverCreate: function (data) {
-    // make sure no duplicates, just in case
-    console.log('serverCreate');
-    console.log(data);
-    //var exists = this.get(data.id);
-    //if (!exists) {
-      //this.add(data);
-    //} else {
-      //data.fromServer = true;
-      //exists.set(data);
-    //}
+    data.id = data._id;
+    var exists = this.get(data.id);
+    if (!exists) {
+      this.add(data);
+    } else {
+      data.fromServer = true;
+      exists.set(data);
+    }
   },
   collectionCleanup: function (callback) {
     this.ioUnbindAll();
