@@ -7,7 +7,6 @@ module.exports = function(app, conf) {
     , ObjectId      = Schema.ObjectId
     , mongooseAuth  = app.modules.mongooseAuth;
 
-
   /**
    * Player Schema
    */
@@ -89,20 +88,27 @@ module.exports = function(app, conf) {
       , game = new app.models.Game(data);
     game.creator = that;
     game.save(function(err) {
-      callback(err, game._id);
+      callback(err, game);
     });
   }
 
   PlayerSchema.methods.joinGame = function(gameId, callback) {
-    var that = this
-      , idx = that.games.current.indexOf(gameId);
+    var that    = this;
+    var  idx     = that.games.current.indexOf(gameId);
     if (idx === -1) {
+      app.models.Game.findById(gameId, function(err, game) {
+        game.players.waiting.push(that);
+        game.save(function(err) {
+          if (callback) callback(err);
+        });
+      });
       that.games.current.push(gameId);
       that.save(function(err) {
         if (callback) callback(err);
       });
     } else {
-      if (callback) callback(err);
+      // TODO: throw error "game already joined"
+      if (callback) callback(null);
     }
   }
 
