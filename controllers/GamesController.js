@@ -89,7 +89,6 @@ GamesController.prototype.gamesPage = function() {
         });
       });
 
-    
     });
 }
 
@@ -107,13 +106,6 @@ GamesController.prototype.gamePage = function() {
     });
 }
 
-
-/**
- * Join a game
- */
-GamesController.prototype.joinGame = function(socket, gameId) {
-};
-
 /**
  * Leave a game
  */
@@ -126,16 +118,6 @@ GamesController.prototype.leaveGame = function(socket, gameId) {
   socket.leave(gameId);
   socket.emit('game:left', "you've left #" + gameId);
 };
-
-/**
- * Refresh available games
- */
-//GamesController.prototype.refresh = function(socket) {
-  //var that = this;
-  //that.app.models.Game.findAvailable(function(err, games) {
-    //that.games.emit('games', games);
-  //});
-//};
 
 
 // Export a new instance of a RoomController.
