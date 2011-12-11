@@ -67,7 +67,7 @@ module.exports = function(app, conf) {
   
 
   /**
-   * Return the Player model
+   * Return the Game model
    */
   return Game
 
