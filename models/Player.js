@@ -4,8 +4,8 @@
 module.exports = function(app, conf) {
 
   var Schema        = app.db.Schema
-    , ObjectId      = Schema.ObjectId
-    , mongooseAuth  = app.modules.mongooseAuth;
+  var ObjectId      = Schema.ObjectId
+  var mongooseAuth  = app.modules.mongooseAuth;
 
   /**
    * Player Schema
@@ -84,8 +84,8 @@ module.exports = function(app, conf) {
   }
 
   PlayerSchema.methods.createGame = function(data, callback) {
-    var that = this
-      , game = new app.models.Game(data);
+    var that    = this
+    var game    = new app.models.Game(data);
     game.creator = that;
     game.save(function(err) {
       callback(err, game);
@@ -94,27 +94,27 @@ module.exports = function(app, conf) {
 
   PlayerSchema.methods.joinGame = function(gameId, callback) {
     var that    = this;
-    var  idx     = that.games.current.indexOf(gameId);
+    var idx     = that.games.current.indexOf(gameId);
     if (idx === -1) {
-      app.models.Game.findById(gameId, function(err, game) {
-        game.players.waiting.push(that);
-        game.save(function(err) {
-          if (callback) callback(err);
-        });
-      });
       that.games.current.push(gameId);
       that.save(function(err) {
-        if (callback) callback(err);
+        app.models.Game.findById(gameId, function(err, game) {
+          game.players.waiting.push(that);
+          game.save(function(err) {
+            if (callback) callback(err, game);
+          });
+        });
       });
     } else {
       // TODO: throw error "game already joined"
-      if (callback) callback(null);
+      console.log('already joined');
+      if (callback) callback(null, null);
     }
   }
 
   PlayerSchema.methods.leaveGame = function(gameId, callback) {
-    var that = this
-      , idx = that.games.current.indexOf(gameId);
+    var that    = this
+    var idx     = that.games.current.indexOf(gameId);
     if (idx != -1) {
       that.games.current.splice(idx, 1);
     }

@@ -1,4 +1,4 @@
-  var _ = require('underscore');
+var _ = require('underscore');
 
 /**
  * Games page Controller.
@@ -9,14 +9,21 @@ var GamesController = function(app, conf) {
   that.app    = app;
   that.conf   = conf;
   that.io     = app.modules.io;
-  that.games  = that.io.of('/games');
-  //that.game   = that.io.of('game');
+  that.io_games  = that.io.of('/games');
+  that.io_game   = that.io.of('game');
   
-  // REST routes
-  app.get('/games', app.middlewares.mustBeLoggedIn, that.index);
+  // Render games list
+  app.get('/games', app.middlewares.mustBeLoggedIn, function(req, res) {
+    res.render('games');
+  });
+  // Render basic view for a given game
+  app.get('/games/:id', app.middlewares.mustBeLoggedIn, function(req, res) {
+    res.render('game');
+  });
   
-  that.gamesPage();
-  //that.gamePage();
+  // socket.io events
+  that.games();
+  that.game();
 
   // socket.io
       //req.app.models.Player.joinGame(gameId, function(err) {
@@ -33,18 +40,11 @@ var GamesController = function(app, conf) {
 
 
 /**
- * Index Page.
- */
-GamesController.prototype.index = function(req, res) {
-  res.render('games');
-};
-
-/**
  * socket.io for /games
  */
-GamesController.prototype.gamesPage = function() {
+GamesController.prototype.games = function() {
   var that = this;
-  that.games
+  that.io_games
     .on('connection', function(socket) {
 
       /**
@@ -68,7 +68,7 @@ GamesController.prototype.gamesPage = function() {
         var playerId = socket.handshake.session.auth.userId;
         that.app.models.Player.findById(playerId, function(err, player) {
           player.createGame(data, function(err, data) {
-            that.games.emit('games:create', data);
+            that.io_games.emit('games:create', data);
             callback(null, data);
           });
         });
@@ -83,8 +83,9 @@ GamesController.prototype.gamesPage = function() {
       socket.on('games:update', function(game) {
         var playerId = socket.handshake.session.auth.userId;
         that.app.models.Player.findById(playerId, function(err, player) {
-          player.joinGame(game.id, function(err, gameId) {
-            socket.join(gameId);
+          player.joinGame(game.id, function(err, data) {
+            socket.join(game._id);
+            that.io_games.emit('games/'+game._id+':update', data);
           });
         });
       });
@@ -95,29 +96,21 @@ GamesController.prototype.gamesPage = function() {
 /**
  * socket.io for /game
  */
-GamesController.prototype.gamePage = function() {
+GamesController.prototype.game = function() {
   var that = this;
-  that.game
+  that.io_game
     .on('connection', function(socket) {
-      // Leave Game
+
       socket.on('game:leave', function(gameId) {
-        that.leaveGame(socket, gameId);
+        var playerId = socket.handshake.session.auth.userId;
+        that.app.models.Player.findById(playerId, function(err, player) {
+          player.leaveGame(gameId);
+        });
       });
+
     });
 }
 
-/**
- * Leave a game
- */
-GamesController.prototype.leaveGame = function(socket, gameId) {
-  var that = this
-    , playerId = socket.handshake.session.auth.userId;
-  that.app.models.Player.findById(playerId, function(err, player) {
-    player.leaveGame(gameId);
-  });
-  socket.leave(gameId);
-  socket.emit('game:left', "you've left #" + gameId);
-};
 
 
 // Export a new instance of a RoomController.

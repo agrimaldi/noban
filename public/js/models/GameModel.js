@@ -23,8 +23,6 @@ var Game = Backbone.Model.extend({
   }
 , serverChange: function (data) {
     data.fromServer = true;
-    console.log('serverChange');
-    console.log(data);
     this.set(data);
   }
 , serverDelete: function (data) {
