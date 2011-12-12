@@ -24,6 +24,7 @@ var Game = Backbone.Model.extend({
 , serverChange: function (data) {
     data.fromServer = true;
     this.set(data);
+    window.location.pathname = '/games/' + data.id;
   }
 , serverDelete: function (data) {
     console.log('serverDelete');

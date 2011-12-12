@@ -1,4 +1,5 @@
 window.socket = io.connect('/games');
+window.game_socket = io.connect('/game');
 
 // We are going to put our app in the minimal namespace.
 var Minimal = {};
@@ -21,12 +22,16 @@ Minimal.App = Backbone.Router.extend({
   routes: {
     '': 'index'
   , '/': 'index'
+  , '/:id': 'game'
   }
 , index: function () {
     var games = new Minimal.Games();
     var form = new Minimal.GameListForm(games);
     var list = new Minimal.GameList(games);
     games.fetch();
+  }
+, game: function(id) {
+    console.log(id);
   }
 });
 
