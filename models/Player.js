@@ -95,21 +95,19 @@ module.exports = function(app, conf) {
   PlayerSchema.methods.joinGame = function(gameId, callback) {
     var that    = this;
     var idx     = that.games.current.indexOf(gameId);
-    if (idx === -1) {
-      that.games.current.push(gameId);
-      that.save(function(err) {
-        app.models.Game.findById(gameId, function(err, game) {
-          game.players.waiting.push(that);
-          game.save(function(err) {
-            if (callback) callback(err, game);
+    app.models.Game.findById(gameId, function(err, game) {
+      if (idx === -1) {
+        game.players.waiting.push(that);
+        game.save(function(err) {
+          that.games.current.push(gameId);
+          that.save(function(err) {
+            if (callback) callback(null, game);
           });
         });
-      });
-    } else {
-      // TODO: throw error "game already joined"
-      console.log('already joined');
-      if (callback) callback(null, null);
-    }
+      } else {
+        if (callback) callback(null, game);
+      }
+    });
   }
 
   PlayerSchema.methods.leaveGame = function(gameId, callback) {
