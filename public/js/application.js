@@ -1,13 +1,6 @@
 window.socket = io.connect('/games');
 window.game_socket = io.connect('/game');
 
-// We are going to put our app in the minimal namespace.
-var Minimal = {};
-Minimal.Games = Games;
-Minimal.Game = Game;
-Minimal.GameList = GameList;
-Minimal.GameListItem = GameListItem;
-Minimal.GameListForm = GameListForm;
 
 /**
  * App#Router
@@ -18,16 +11,16 @@ Minimal.GameListForm = GameListForm;
  * Then append the views to our page.
  */
 
-Minimal.App = Backbone.Router.extend({
+var Application = Backbone.Router.extend({
   routes: {
     '': 'index'
   , '/': 'index'
   , '/:id': 'game'
   }
 , index: function () {
-    var games = new Minimal.Games();
-    var form = new Minimal.GameListForm(games);
-    var list = new Minimal.GameList(games);
+    var games = new Games();
+    var form = new GameListForm(games);
+    var list = new GameList(games);
     games.fetch();
   }
 , game: function(id) {
@@ -38,6 +31,6 @@ Minimal.App = Backbone.Router.extend({
 
 // When the page is ready, create a new app and trigger the router.
 $(document).ready(function() {
-  window.app = new Minimal.App();
+  window.application = new Application();
   Backbone.history.start();
 });

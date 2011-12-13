@@ -17,9 +17,9 @@ var GamesController = function(app, conf) {
     res.render('games');
   });
   // Render basic view for a given game
-  app.get('/games/:id', app.middlewares.mustBeLoggedIn, function(req, res) {
-    res.render('game');
-  });
+  //app.get('/games/:id', app.middlewares.mustBeLoggedIn, function(req, res) {
+    //res.render('game');
+  //});
   
   // socket.io events
   that.games();
