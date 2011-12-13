@@ -10,16 +10,16 @@ var GamesController = function(app, conf) {
   that.conf   = conf;
   that.io     = app.modules.io;
   that.io_games  = that.io.of('/games');
-  that.io_game   = that.io.of('game');
+  that.io_game   = that.io.of('/game');
   
   // Render games list
   app.get('/games', app.middlewares.mustBeLoggedIn, function(req, res) {
     res.render('games');
   });
   // Render basic view for a given game
-  //app.get('/games/:id', app.middlewares.mustBeLoggedIn, function(req, res) {
-    //res.render('game');
-  //});
+  app.get('/game/:id', app.middlewares.mustBeLoggedIn, function(req, res) {
+    res.render('game');
+  });
   
   // socket.io events
   that.games();
@@ -101,7 +101,14 @@ GamesController.prototype.game = function() {
   that.io_game
     .on('connection', function(socket) {
 
-      socket.on('game:leave', function(gameId) {
+      socket.on('players:read', function(data, callback) {
+        console.log(data);
+        //that.app.models.Game.findOne(, function(err, games) {
+          //callback(null, games);
+        //});
+      });
+
+      socket.on('player:leave', function(gameId) {
         var playerId = socket.handshake.session.auth.userId;
         that.app.models.Player.findById(playerId, function(err, player) {
           player.leaveGame(gameId);

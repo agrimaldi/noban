@@ -32,7 +32,7 @@ var Game = Backbone.Model.extend({
     data.fromServer = true;
     data.id = data._id;
     this.set(data);
-    //window.location.pathname = '/games/#/' + data.id;
+    window.location.pathname = '/game/' + data.id;
   }
 , serverDelete: function (data) {
     console.log('serverDelete');
@@ -154,7 +154,7 @@ var GameListItem = Backbone.View.extend({
       '<div>' +
         '<a href="games/#/blae">'+ this.model.attributes.title + '</a>' +
         //this.model.attributes.title +
-        //'<button class="join">Join</button>' +
+        '<button class="join">Join</button>' +
       '</div>'
     );
     $(this.el).attr('id', this.model.attributes._id);

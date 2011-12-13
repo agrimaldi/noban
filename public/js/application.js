@@ -1,5 +1,4 @@
 window.socket = io.connect('/games');
-window.game_socket = io.connect('/game');
 
 
 /**
@@ -15,17 +14,19 @@ var Application = Backbone.Router.extend({
   routes: {
     '': 'index'
   , '/': 'index'
-  , '/:id': 'game'
+  //, '/:id': 'game'
   }
 , index: function () {
     var games = new Games();
     var form = new GameListForm(games);
-    var list = new GameList(games);
+    var gamesList = new GameList(games);
     games.fetch();
   }
-, game: function(id) {
-    console.log(id);
-  }
+//, game: function(id) {
+    //var players = new Players();
+    //var playersList = new PlayerList(players);
+    //players.fetch();
+  //}
 });
 
 
