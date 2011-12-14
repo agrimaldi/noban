@@ -55,6 +55,7 @@ GamesController.prototype.games = function() {
        */
       socket.on('games:read', function(data, callback) {
         that.app.models.Game.findAvailable(function(err, games) {
+          console.log(games);
           callback(null, games);
         });
       });
@@ -102,11 +103,13 @@ GamesController.prototype.game = function() {
     .on('connection', function(socket) {
 
       socket.on('players:read', function(data, callback) {
-        console.log(data);
-        //that.app.models.Game.findOne(, function(err, games) {
-          //callback(null, games);
-        //});
-      });
+        that.app.models.Game
+          .findById(data.gameId)
+          .populate('players.waiting')
+          .run(function(err, game) {
+            callback(null, game.players.waiting);
+          });
+        });
 
       socket.on('player:leave', function(gameId) {
         var playerId = socket.handshake.session.auth.userId;

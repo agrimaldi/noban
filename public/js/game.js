@@ -15,10 +15,14 @@ var Application = Backbone.Router.extend({
     '': 'index'
   , '/': 'index'
   }
-, index: function () {
+, index: function() {
     var players = new Players();
     var PlayersList = new PlayerList(players);
-    players.fetch({ data: window.location.pathname.split('/')[2] });
+    players.fetch({
+      data: {
+        gameId: window.location.pathname.split('/')[2]
+      }
+    });
   }
 });
 

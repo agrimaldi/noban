@@ -24,7 +24,7 @@ var Player = Backbone.Model.extend({
     this.id = this.attributes._id;
     _.bindAll(this, 'serverDelete', 'modelCleanup');
     if (!this.noIoBind) {
-      this.ioBind('update', this.serverChange, this);
+      //this.ioBind('update', this.serverChange, this);
       this.ioBind('delete', this.serverDelete, this);
     }
   }
@@ -60,7 +60,6 @@ var Players = Backbone.Collection.extend({
     this.ioBind('create', this.serverCreate, this);
   }
 , serverCreate: function (data) {
-    data.id = data._id;
     var exists = this.get(data.id);
     if (!exists) {
       this.add(data);

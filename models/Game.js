@@ -17,18 +17,18 @@ module.exports = function(app, conf) {
     , size: Number
     , open: { type: Boolean, default: true }
     , finished: { type: Boolean, default: false }
-    , creator: { type: ObjectId, ref: 'PlayerSchema' }
+    , creator: { type: ObjectId, ref: 'Player' }
     , turns: {
         black: [String]
       , white: [String]
       }
     , players: {
-        black: { type: ObjectId, ref: 'PlayerSchema' }
-      , white: { type: ObjectId, ref: 'PlayerSchema' }
-      , waiting: [{ type: ObjectId, ref: 'PlayerSchema' }]
+        black: { type: ObjectId, ref: 'Player' }
+      , white: { type: ObjectId, ref: 'Player' }
+      , waiting: [{ type: ObjectId, ref: 'Player' }]
       }
-    , winner: { type: ObjectId, ref: 'PlayerSchema' }
-    , loser: { type: ObjectId, ref: 'PlayerSchema' }
+    , winner: { type: ObjectId, ref: 'Player' }
+    , loser: { type: ObjectId, ref: 'Player' }
     , level: {
         min: {
           kyu: Number

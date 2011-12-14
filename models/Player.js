@@ -24,10 +24,10 @@ module.exports = function(app, conf) {
       , dan: { type:Number, default: 0 }
       }
     , games: {
-        won: [{ type: ObjectId, ref: 'GameSchema' }]
-      , lost: [{ type: ObjectId, ref: 'GameSchema' }]
-      , tie: [{ type: ObjectId, ref: 'GameSchema' }]
-      , current: [{ type: ObjectId, ref: 'GameSchema' }]
+        won: [{ type: ObjectId, ref: 'Game' }]
+      , lost: [{ type: ObjectId, ref: 'Game' }]
+      , tie: [{ type: ObjectId, ref: 'Game' }]
+      , current: [{ type: ObjectId, ref: 'Game' }]
       }
   });
   var Player = null;
@@ -65,6 +65,15 @@ module.exports = function(app, conf) {
       }
     }
   });
+
+
+  /**
+   * Virtuals
+   */
+  PlayerSchema.virtual('id')
+    .get(function() {
+      return this._id
+    });
 
 
   /**
